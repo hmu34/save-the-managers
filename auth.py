@@ -1,7 +1,10 @@
+import json
 import webapp2
+import uuid
 from google.appengine.api import urlfetch
 
 from handlers.base_handler import BaseHandler
+import models
 
 import config
 
@@ -21,7 +24,19 @@ class AuthCallback(BaseHandler):
             method=urlfetch.POST,
             headers={"Content-Type": "application/x-www-form-urlencoded"})
 
-        return self.response_ok_raw("ok")
+        data = json.loads(result.content)
+        access_token = data['access_token']
+        user_id = data['user_id']
+
+        user = models.User.query_by_id(user_id)
+        if user is None:
+            user = models.User(id=user_id, slack_token=access_token, session_id=uuid.uuid4().hex)
+        else:
+            user.slack_token = access_token
+            user.session_id = uuid.uuid4().hex
+
+        user.put()
+        return self.redirect(config.CONFIGURE_URI.format(session_id=user.session_id))
 
 
 app = webapp2.WSGIApplication([
