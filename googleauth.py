@@ -1,8 +1,10 @@
+import json
 import webapp2
 
 from google.appengine.api import urlfetch
 from handlers.base_handler import BaseHandler
 import config
+import models
 
 
 class AuthCallback(BaseHandler):
@@ -17,7 +19,14 @@ class AuthCallback(BaseHandler):
             method=urlfetch.POST,
             headers={"Content-Type": "application/x-www-form-urlencoded"})
 
-        return self.response_ok_raw(result.content)
+        data = json.loads(result.content)
+
+        user = models.User.query_by_session_id(session_id)
+        user.google_access_token = data['access_token']
+        user.google_refresh_token = data['refresh_token']
+        user.put()
+
+        return self.redirect(config.CONFIGURE_URI.format(session_id=session_id))
 
 
 app = webapp2.WSGIApplication([
