@@ -5,3 +5,5 @@ threadsafe: true
 handlers:
 - url: /api/?.*
   script: main.app
+- url: /auth/?.*
+  script: auth.app

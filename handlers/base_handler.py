@@ -2,7 +2,7 @@ import json
 import webapp2
 
 
-class BaseHandler:
+class BaseHandler(webapp2.RequestHandler):
     HTTP_OK = 200
     HTTP_OK_CREATED = 201
     HTTP_BAD_REQUEST = 400
