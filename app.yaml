@@ -7,3 +7,7 @@ handlers:
   script: main.app
 - url: /auth/?.*
   script: auth.app
+- url: /configure/?.*
+  script: configure.app
+- url: /google-auth/callback
+  script: googleauth.app

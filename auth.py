@@ -2,7 +2,6 @@ import json
 import webapp2
 import uuid
 from google.appengine.api import urlfetch
-
 from handlers.base_handler import BaseHandler
 import models
 
