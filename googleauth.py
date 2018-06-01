@@ -1,4 +1,5 @@
 import json
+import time
 import webapp2
 
 from google.appengine.api import urlfetch
@@ -24,6 +25,7 @@ class AuthCallback(BaseHandler):
         user = models.User.query_by_session_id(session_id)
         user.google_access_token = data['access_token']
         user.google_refresh_token = data['refresh_token']
+        user.google_token_expiry_time = int(time.time()) + data['expires_in']
         user.put()
 
         return self.redirect(config.CONFIGURE_URI.format(session_id=session_id))

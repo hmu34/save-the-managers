@@ -7,6 +7,7 @@ class User(ndb.Model):
     session_id = ndb.StringProperty()
     google_access_token = ndb.StringProperty()
     google_refresh_token = ndb.StringProperty()
+    google_token_expiry_time = ndb.IntegerProperty()
 
     @classmethod
     def query_by_id(cls, id):

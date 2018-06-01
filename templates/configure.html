@@ -1,8 +1,17 @@
 <html>
     <body>
-        Hola {{ session_id }}
-        <a href="{{ google_oauth_redirect_uri }}">
-            Click here to authorize with Gooogle
-        </a>
+        <div>
+            Hola {{ session_id }}
+        </div>
+        <div>
+            {% if is_authorized_with_google %}
+                <p>
+                    Congratulations, you have already granted access to <b>Google Calendar</b>
+                </p>
+            {% else %}
+                <a href="{{ google_oauth_redirect_uri }}">
+                    Click here to grant access to <b>Gooogle Calendar</b>
+                </a>
+            {% endif %}
     </body>
 </html>
