@@ -41,7 +41,7 @@ class SlackApi:
         return self._do_request(
             "chat.postMessage",
             token,
-            "channel={channel}&text={message}&as_user={as_user}".format(
+            u"channel={channel}&text={message}&as_user={as_user}".format(
                 channel=channel,
                 message=message,
                 as_user=("true" if as_user else "false"))
