@@ -1,17 +1,23 @@
 <html>
     <body>
-        <div>
-            Hola {{ session_id }}
+        <div style="text-align: center">
+            <div>
+                <img src="{{ user_image }}"/>
+            </div>
+            <div>
+                {{ user_name }}
+            </div>
+            <div>
+                {% if is_authorized_with_google %}
+                    <p>
+                        Congratulations, you have already granted access to <b>Google Calendar</b>
+                    </p>
+                {% else %}
+                    <a href="{{ google_oauth_redirect_uri }}">
+                        Click here to grant access to <b>Gooogle Calendar</b>
+                    </a>
+                {% endif %}
+            </div>
         </div>
-        <div>
-            {% if is_authorized_with_google %}
-                <p>
-                    Congratulations, you have already granted access to <b>Google Calendar</b>
-                </p>
-            {% else %}
-                <a href="{{ google_oauth_redirect_uri }}">
-                    Click here to grant access to <b>Gooogle Calendar</b>
-                </a>
-            {% endif %}
     </body>
 </html>
