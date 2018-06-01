@@ -2,6 +2,8 @@ from google.appengine.api import urlfetch
 
 import json
 import datetime
+import config
+import models
 
 class Calendar(object):
 
@@ -9,7 +11,8 @@ class Calendar(object):
         If not busy, returns false
         If busy returns the current event list
     """
-    def is_busy(self, date, access_token):
+    def is_busy(self, date, user_id):
+        access_token = self.get_token(user_id)
         time = self.build_date_range(date)
         return self.get_events(time['timeMin'], time['timeMax'], access_token)
 
@@ -33,6 +36,31 @@ class Calendar(object):
         items = filter(Calendar.is_not_available, items)
         items = filter(lambda x: Calendar.is_attending(x) or Calendar.is_organizer(x), items)
         return map(Calendar.map_event, items)
+
+    def get_token(self, user_id):
+        user = models.User.get_by_id(user_id)
+        token_expiry_datetime = datetime.fromtimestamp(user['google_token_expiry_time'])
+        current_datetime = datetime.datetime.now()
+        if token_expiry_datetime <= current_datetime:
+            # Refresh!
+            return self.do_refresh_token(user)
+        return user['google_access_token']
+
+    def do_refresh_token(self, user):
+        result = urlfetch.fetch(
+            url='https://accounts.google.com/o/oauth2/token',
+            payload='grant_type=refresh_token&refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}'.format(
+                refresh_token=user['google_refresh_token'], client_id=config.GOOGLE_CLIENT_ID, client_secret=config.GOOGLE_CLIENT_SECRET),
+            method=urlfetch.POST,
+            headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+        data = json.loads(result.content)
+
+        user.google_access_token = data['access_token']
+        user.google_token_expiry_time = int(time.time()) + data['expires_in']
+        user.put()
+
+        return user.google_access_token
 
     @staticmethod
     def map_event(event):
