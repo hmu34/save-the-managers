@@ -38,10 +38,23 @@ class Calendar(object):
     def map_event(event):
         return {'summary': event.get('summary'),
             'private': bool(Calendar.is_private(event)),
-            'start': event.get('start'),
-            'end': event.get('end'),
+            'start': Calendar.calendar_date_to_ts(event.get('start')),
+            'end': Calendar.calendar_date_to_ts(event.get('end')),
             'location': event.get('location'),
             }
+
+    @staticmethod
+    def calendar_date_to_ts(date):
+        if "dateTime" in date:
+            date_string = date['dateTime'].replace('+02:00','')
+            delta = datetime.timedelta(hours=2)
+            corrected_date = datetime.datetime.strptime(date_string,'%Y-%m-%dT%H:%M:%S') + delta
+            return corrected_date.strftime("%s")
+        elif "date" in date:
+            date_string = date['date']
+            delta = datetime.timedelta(hours=2)
+            corrected_date = datetime.datetime.strptime(date_string,'%Y-%m-%d') + delta
+            return corrected_date.strftime("%s")
 
     @staticmethod
     def is_attending(event):
