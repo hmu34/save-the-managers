@@ -4,7 +4,7 @@ import config
 
 
 class EventCallbackHandler(BaseHandler):
-    GREETINGS = ["hola", "hello"]
+    GREETINGS = ["soy sebas", "sebas here"]
 
     def handle(self, event):
         payload = event['event']

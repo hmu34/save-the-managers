@@ -1,5 +1,10 @@
 <html>
-    <body>
+    <body style="font-size: large">
+        {% if success %}
+            <div style="text-align: center; color: green">
+                <h2>Settings saved</h2>
+            </div>
+        {% endif %}
         <div style="text-align: center">
             <div>
                 <img src="{{ user_image }}"/>
@@ -18,6 +23,28 @@
                     </a>
                 {% endif %}
             </div>
+
         </div>
+        <form action="/configure/save">
+            <input type="hidden" value="{{ session_id }}" name="session_id"/>
+            <div style="text-align: center">
+                <h2>Blacklist</h2>
+                <input value="{{ blacklist_1 }}" type="text" name="blacklist_1" placeholder="Here your first enemy"/>
+                <input value="{{ blacklist_2 }}" type="text" name="blacklist_2" placeholder="Here your second enemy"/>
+                <input value="{{ blacklist_3 }}" type="text" name="blacklist_3" placeholder="Here your third enemy"/>
+            </div>
+            <div style="text-align: center">
+                <h2>Whitelist</h2>
+                <input value="{{ whitelist_1 }}" type="text" name="whitelist_1" placeholder="Here your first friend"/>
+                <input value="{{ whitelist_2 }}" type="text" name="whitelist_2" placeholder="Here your second friend"/>
+                <input value="{{ whitelist_3 }}" type="text" name="whitelist_3" placeholder="Here your third friend"/>
+            </div>
+            <div>
+                &nbsp;
+            </div>
+            <div style="text-align: center">
+                <button type="submit">Save</button>
+            </div>
+        </form>
     </body>
 </html>

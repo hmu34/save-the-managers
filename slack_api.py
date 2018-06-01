@@ -13,6 +13,18 @@ class SlackApi:
             "user={user}".format(user=user_id)
         ).get('profile', {})
 
+    def get_user_by_name(self, token, name):
+        users = filter(lambda x: x['name'] == name,
+                       self._do_request(
+                           'users.list',
+                           token
+                       ).get('members', []))
+
+        if len(users) > 0:
+            return users[0]
+        else:
+            return None
+
     def get_channel_info(self, token, channel):
         return self._do_request(
             "conversations.info",

@@ -9,6 +9,11 @@ class User(ndb.Model):
     google_refresh_token = ndb.StringProperty()
     google_token_expiry_time = ndb.IntegerProperty()
 
+    whitelist_names = ndb.StringProperty(repeated=True)
+    blacklist_names = ndb.StringProperty(repeated=True)
+    whitelist_ids = ndb.StringProperty(repeated=True)
+    blacklist_ids = ndb.StringProperty(repeated=True)
+
     @classmethod
     def query_by_id(cls, id):
         return User.get_by_id(id)
