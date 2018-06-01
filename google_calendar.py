@@ -2,8 +2,10 @@ from google.appengine.api import urlfetch
 
 import json
 import datetime
+import time
 import config
 import models
+import logging
 
 class Calendar(object):
 
@@ -39,18 +41,18 @@ class Calendar(object):
 
     def get_token(self, user_id):
         user = models.User.get_by_id(user_id)
-        token_expiry_datetime = datetime.fromtimestamp(user['google_token_expiry_time'])
+        token_expiry_datetime = datetime.datetime.fromtimestamp(user.google_token_expiry_time)
         current_datetime = datetime.datetime.now()
         if token_expiry_datetime <= current_datetime:
             # Refresh!
             return self.do_refresh_token(user)
-        return user['google_access_token']
+        return user.google_access_token
 
     def do_refresh_token(self, user):
         result = urlfetch.fetch(
             url='https://accounts.google.com/o/oauth2/token',
             payload='grant_type=refresh_token&refresh_token={refresh_token}&client_id={client_id}&client_secret={client_secret}'.format(
-                refresh_token=user['google_refresh_token'], client_id=config.GOOGLE_CLIENT_ID, client_secret=config.GOOGLE_CLIENT_SECRET),
+                refresh_token=user.google_refresh_token, client_id=config.GOOGLE_CLIENT_ID, client_secret=config.GOOGLE_CLIENT_SECRET),
             method=urlfetch.POST,
             headers={"Content-Type": "application/x-www-form-urlencoded"})
 
@@ -59,6 +61,7 @@ class Calendar(object):
         user.google_access_token = data['access_token']
         user.google_token_expiry_time = int(time.time()) + data['expires_in']
         user.put()
+        logging.info("Token refreshed")
 
         return user.google_access_token
 
